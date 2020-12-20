@@ -71,7 +71,11 @@ export default {
   created() {
   },
   mounted() {
+
     // performance test
+    // 优化大量div的插入性能
+    // https://chrisdeo.github.io/2019/07/22/%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%A4%A7%E9%87%8FDIV%E6%8F%92%E5%85%A5%E9%97%AE%E9%A2%98/
+    var fragment = document.createDocumentFragment();
     this.tips = []
     const length = 1000
     for (let i = 0; i < length; i++) {
@@ -79,13 +83,18 @@ export default {
       d.id = "tip-" + i;
       d.className = "item";
       d.textContent = "tip-" + i;
-      document.body.appendChild(d)
+
+      // document.body.appendChild(d)
+      fragment.appendChild(d);
+
       this.tips.push(d)
 
       if( i >= length/2) {
         d.style.top = '100px'
       }
     }
+    document.body.appendChild(fragment)
+
     // 单纯拖动，jsplumb和dragAbsolute效率差不多，dragMatrix效率略高
     // for (let i = 0; i < 1000; i++) {
     //   const d = document.createElement("div");
@@ -324,7 +333,6 @@ export default {
           endpoint: "Blank",
           anchor: ["Center"],
           connector: ["Straight"],
-          endpointStyle:{display:'none'}
         });
         tips[i].conn = conn;
 
