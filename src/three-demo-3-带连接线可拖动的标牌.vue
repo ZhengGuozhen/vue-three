@@ -68,47 +68,16 @@ export default {
   },
   computed: {},
   watch: {},
-  created() {
-  },
+  created() {},
   mounted() {
-    // performance test
-    this.tips = []
-    const length = 1000
-    for (let i = 0; i < length; i++) {
-      const d = document.createElement("div");
-      d.id = "tip-" + i;
-      d.className = "item";
-      d.textContent = "tip-" + i;
-      document.body.appendChild(d)
-      this.tips.push(d)
 
-      if( i >= length/2) {
-        d.style.top = '100px'
-      }
-    }
-    // 单纯拖动，jsplumb和dragAbsolute效率差不多，dragMatrix效率略高
-    // for (let i = 0; i < 1000; i++) {
-    //   const d = document.createElement("div");
-    //   d.id = "absoluteDragBox-" + i;
-    //   d.className = "item";
-    //   d.textContent = "absoluteDragBox-" + i;
-    //   d.style.top = '200px'
-
-    //   document.body.appendChild(d)
-    //   dragAbsolute(d);
-    // }
-
-
-
-
-    const tips = this.tips
 
     dragMatrix(document.getElementById("matrixDragBox"));
     dragMatrix(document.getElementById("matrixDragBox2"));
     dragAbsolute(document.getElementById("absoluteDragBox"));
     dragAbsolute(document.getElementById("absoluteDragBox2"));
 
-   
+
 
 //////////////////////////////////////////////////////////////////
     let camera, scene, renderer, labelRenderer;
@@ -119,9 +88,6 @@ export default {
     let earth, moon;
 
     init();
-    // 渲染一次
-    renderer.render(scene, camera);
-    labelRenderer.render(scene, camera);
     animate();
 
     function init() {
@@ -232,12 +198,11 @@ export default {
     }
 
     function animate() {
-
       requestAnimationFrame(animate);
 
       const elapsed = clock.getElapsedTime();
 
-      // earth.position.set(Math.sin(elapsed) * 2, 0, Math.cos(elapsed) * 5);
+      earth.position.set(Math.sin(elapsed) * 2, 0, Math.cos(elapsed) * 5);
       moon.position.set(Math.sin(elapsed) * 5, 0, Math.cos(elapsed) * 5);
 
       renderer.render(scene, camera);
@@ -246,44 +211,37 @@ export default {
       // @zgz
       const el = document.getElementById("earth");
       const el2 = document.getElementById("jsplumb1");
+      // console.log(document.getElementById('moon').style.transform)
+      // const t = el.style.transform
+      // document.getElementById('absoluteDragBox2').style.transform = t
+      // document.getElementById('jsplumb2').style.transform = t
+
+      // console.log(document.getElementById('earth').style.transform)
+      // let a = window.getComputedStyle(document.getElementById('earth')).transform
+      // console.log(a)
+
       var style = window.getComputedStyle(el);
       var matrix = new WebKitCSSMatrix(style.transform);
+      // console.log('matrix: ', matrix);
+      // console.log('translateX: ', matrix.m41);
+      // console.log('translateY: ', matrix.m42);
+      // el2.style.top = matrix.m42 + 'px'
+      // el2.style.left = matrix.m41 + 'px'
       el2.style.transform = el.style.transform;
+
       if (el.conn) {
+        // console.log(el.conn.connector);
+        // console.log(el.conn.connector.svg.style.transform)
+        // console.log(el.style.transform)
+        // el.conn.connector.svg.style.transform = el.style.transform;
         el.conn.connector.svg.style.transform = `translate(${matrix.m41}px, ${matrix.m42}px)`;
       }
-
-      
-
-      // performance test
-      a()
-    }
-
-    function a (){
-      const el = document.getElementById("earth");
-
-      for (let i = 0; i < tips.length; i++) {
-        // 这里的getComputedStyle、WebKitCSSMatrix计算耗时严重
-        // tips[i].style.transform = el.style.transform;
-        // var style = window.getComputedStyle(el);
-        // var matrix = new WebKitCSSMatrix(style.transform);
-        // if (tips[i].conn) {
-        //   tips[i].conn.connector.svg.style.transform = `translate(${matrix.m41}px, ${matrix.m42}px)`;
-        // }
-
-
-        tips[i].style.transform = el.style.transform;
-        if (tips[i].conn) {
-          tips[i].conn.connector.svg.style.transform = 'translate(50%, 50%) ' + el.style.transform;
-        }
-      }
-
 
     }
 //////////////////////////////////////////////////////////////////
 
 
-// return
+
     // @zgz
     this.plumbIns = jsPlumb.getInstance();
     const that = this.plumbIns;
@@ -303,57 +261,17 @@ export default {
         anchor: ["Center"],
         connector: ["Straight"],
       });
-      that.draggable("earth");// 无效
+      that.draggable("earth");
       that.draggable("jsplumb1");
       that.draggable('jsplumb2')
 
       document.getElementById("earth").conn = conn;
       // console.log(document.getElementById('earth'))
       // console.log(conn.connector.svg.style)
-
-
-
-      // performance test
-      // source和target互换对性能影响很大
-      // 同一个element作为source连接多个element会卡
-      for (let i = 0; i < tips.length; i++) {
-        // 都和earth连接
-        var conn = that.connect({
-          source: tips[i],
-          target: "earth",
-          endpoint: "Blank",
-          anchor: ["Center"],
-          connector: ["Straight"],
-          endpointStyle:{display:'none'}
-        });
-        tips[i].conn = conn;
-
-        // 前一半和后一半连接
-        // if (i < tips.length/2) {
-        //   var conn = that.connect({
-        //     // source: "jsplumb2",
-        //     source: tips[i],
-        //     // target: "earth",
-        //     target: tips[i + tips.length/2],
-        //     endpoint: "Blank",
-        //     anchor: ["Center"],
-        //     connector: ["Straight"],
-        //     endpointStyle:{display:'none'}
-        //   });
-
-        //   tips[i].conn = conn;
-        // }
-
-
-
-        that.draggable(tips[i])
-
-      }
-
     });
 
 
-
+    
   },
   methods: {},
 };
@@ -403,7 +321,7 @@ export default {
   display: none;
 }
 #absoluteDragBox {
-  left: 200px;
+  left: 100px;
 }
 #absoluteDragBox2 {
   left: 0;
@@ -414,7 +332,6 @@ export default {
   border: solid red 1px;
   position: absolute;
   left: 0px;
-  top: 0px;
   z-index: 999;
 }
 #jsplumb1 {

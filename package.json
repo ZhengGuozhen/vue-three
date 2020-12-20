@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
+    "jsplumb": "^2.15.5",
     "three": "^0.123.0",
     "vue": "^2.6.11",
     "vxe-table": "^3.0.13",
